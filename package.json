@@ -1,0 +1,30 @@
+{
+  "name": "twitchi",
+  "version": "1.0.0",
+  "description": "Twitchi is a simple library written using TypeScript to perform actions on Twitch.tv using WebSocket requests.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/r1pk/Twitchi.git"
+  },
+  "keywords": [
+    "twitch",
+    "websocket",
+    "typescript"
+  ],
+  "author": "r1pk",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/r1pk/Twitchi/issues"
+  },
+  "homepage": "https://github.com/r1pk/Twitchi#readme",
+  "dependencies": {
+    "@types/ws": "^7.2.4",
+    "typescript": "^3.8.3",
+    "ws": "^7.5.3"
+  }
+}
