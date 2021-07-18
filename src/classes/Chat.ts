@@ -63,6 +63,13 @@ export class Chat extends EventEmitter {
     return token;
   };
 
+  private parseChannelName = (channelName: string): string => {
+    if (channelName[0] !== '#') {
+      return `#${channelName}`;
+    }
+    return channelName;
+  };
+
   public close = () => {
     this.chatSocket.close();
   };
