@@ -70,6 +70,10 @@ export class Chat extends EventEmitter {
     return channelName;
   };
 
+  public getPingTimestamp = (): number => {
+    return this.pingTimestamp;
+  };
+
   public joinChannel = (channelName: string): void => {
     channelName = this.parseChannelName(channelName);
     this.chatSocket.send(`JOIN ${channelName}`);
