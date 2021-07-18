@@ -70,6 +70,30 @@ export class Chat extends EventEmitter {
     return channelName;
   };
 
+  public joinChannel = (channelName: string): void => {
+    channelName = this.parseChannelName(channelName);
+    this.chatSocket.send(`JOIN ${channelName}`);
+  };
+
+  public leaveChannel = (channelName: string): void => {
+    channelName = this.parseChannelName(channelName);
+    this.chatSocket.send(`PART ${channelName}`);
+  };
+
+  public hostChannel = (channelName: string): void => {
+    channelName = this.parseChannelName(channelName);
+    this.chatSocket.send(`PRIVMSG #${this.userCredentials.username} :.host ${channelName}`);
+  };
+
+  public unhostChannel = (): void => {
+    this.chatSocket.send(`PRIVMSG #${this.userCredentials.username} :.unhost`);
+  };
+
+  public sendMessage = (channelName: string, message: string): void => {
+    channelName = this.parseChannelName(channelName);
+    this.chatSocket.send(`PRIVMSG ${channelName} :${message}`);
+  };
+
   public close = () => {
     this.chatSocket.close();
   };
