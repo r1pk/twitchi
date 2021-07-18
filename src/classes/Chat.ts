@@ -18,4 +18,52 @@ export class Chat extends EventEmitter {
     ping: /PING :tmi.twitch.tv/,
   };
   private pingTimestamp: number = new Date().getTime();
+
+  constructor(userCredentials: I.Credentials) {
+    super();
+    this.chatSocket = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
+    this.chatSocket.addEventListener('open', this.handleSocketConnection);
+    this.userCredentials = Object.assign(userCredentials, {
+      token: this.parseTwitchToken(userCredentials.token),
+    });
+  }
+
+  private handleSocketConnection = (): void => {
+    this.chatSocket.addEventListener('message', this.handleSocketMessage);
+    this.chatSocket.addEventListener('close', this.handleSocketClose);
+    this.chatSocket.send(`PASS ${this.userCredentials.token}`);
+    this.chatSocket.send(`NICK ${this.userCredentials.username}`);
+    this.chatSocket.send(`CAP REQ :twitch.tv/commands`);
+    this.emit('ready');
+  };
+
+  private handleSocketMessage = ({ data: receivedMessage }: any): void | boolean => {
+    if (this.regexps.message.test(receivedMessage)) {
+      const groups = this.regexps.message.exec(receivedMessage)!.groups;
+      return this.emit('message', Object.assign({}, groups));
+    }
+    if (this.regexps.notice.test(receivedMessage)) {
+      const groups = this.regexps.notice.exec(receivedMessage)!.groups;
+      return this.emit('notice', Object.assign({}, groups));
+    }
+    if (this.regexps.ping.test(receivedMessage)) {
+      this.pingTimestamp = new Date().getTime();
+      return this.chatSocket.send('PONG :tmi.twitch.tv');
+    }
+  };
+
+  private handleSocketClose = (): void => {
+    this.emit('close');
+  };
+
+  private parseTwitchToken = (token: string): string => {
+    if (!token.includes('oauth:')) {
+      return `oauth:${token}`;
+    }
+    return token;
+  };
+
+  public close = () => {
+    this.chatSocket.close();
+  };
 }
